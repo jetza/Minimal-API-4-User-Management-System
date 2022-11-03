@@ -27,10 +27,10 @@ app.MapGet("/", () => "User Management System minimal APIs");
 
 //USERS
 
-//Get all Todo Items
+//Get all Users
 app.MapGet("/api/Users", async (DataContext context) => await context.Users.Take(10).ToListAsync());
 
-//Get Todo Items by id
+//Get Users by id
 app.MapGet("/api/Users/{id}", async (DataContext context, int id) =>
     await context.Users.FindAsync(id) is User todoItem ? Results.Ok(todoItem) : Results.NotFound("User not found ./"));
 
