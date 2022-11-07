@@ -2,6 +2,7 @@ using MinimalAPI;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -10,6 +11,19 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+var allowedOrigins = builder.Configuration.GetValue("Cors:AllowedOrigins", string.Empty).Split(';');
+
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      builder =>
+                      {
+                          builder.WithOrigins("http://localhost:3000");
+                      });
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -19,11 +33,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors(MyAllowSpecificOrigins);
 app.UseHttpsRedirection();
 
 //Get to Try out the routing
 app.MapGet("/", () => "User Management System minimal APIs");
-
 
 //USERS
 
@@ -81,6 +95,8 @@ app.MapDelete("/api/User/{id}", async (DataContext context, int id) =>
 //PERMISSIONS
 app.MapGet("/api/Permissions", async (DataContext context) => await context.Permissions.ToListAsync());
 
+//userPermissions post  userid permissionid save
+//delete 
 
 
 
