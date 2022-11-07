@@ -2,6 +2,7 @@ using MinimalAPI;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -10,6 +11,18 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+var allowedOrigins = builder.Configuration.GetValue("Cors:AllowedOrigins", string.Empty).Split(';');
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder => builder
+    .WithOrigins(allowedOrigins)
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials()
+    );
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -17,12 +30,15 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors("AllowAllHeaders"); ;
 }
 
 app.UseHttpsRedirection();
 
 //Get to Try out the routing
 app.MapGet("/", () => "User Management System minimal APIs");
+
+
 
 
 //USERS
