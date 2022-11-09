@@ -13,16 +13,17 @@ builder.Services.AddDbContext<DataContext>(options =>
 
 var allowedOrigins = builder.Configuration.GetValue("Cors:AllowedOrigins", string.Empty).Split(';');
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder => builder
-    .WithOrigins(allowedOrigins)
-    .AllowAnyHeader()
-    .AllowAnyMethod()
-    .AllowCredentials()
-    );
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      builder =>
+                      {
+                          builder.WithOrigins("http://localhost:3000");
+                      });
 });
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -33,13 +34,11 @@ if (app.Environment.IsDevelopment())
     app.UseCors("AllowAllHeaders"); ;
 }
 
+app.UseCors(MyAllowSpecificOrigins);
 app.UseHttpsRedirection();
 
 //Get to Try out the routing
 app.MapGet("/", () => "User Management System minimal APIs");
-
-
-
 
 //USERS
 
@@ -97,6 +96,8 @@ app.MapDelete("/api/User/{id}", async (DataContext context, int id) =>
 //PERMISSIONS
 app.MapGet("/api/Permissions", async (DataContext context) => await context.Permissions.ToListAsync());
 
+//userPermissions post  userid permissionid save
+//delete 
 
 
 
