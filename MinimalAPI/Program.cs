@@ -22,9 +22,12 @@ builder.Services.AddCors(options =>
                       builder =>
                       {
                           builder.WithOrigins("http://localhost:3000");
+                          builder.WithMethods("GET", "POST", "PUT", "DELETE");
+                          builder.AllowAnyHeader();
                       });
 });
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -64,18 +67,16 @@ app.MapPut("/api/Users/{id}", async (DataContext context, User user, int id) =>
 
     if (usersFromDb != null)
     {
+        usersFromDb.FirstName = user.FirstName;
+        usersFromDb.LastName = user.LastName;
         usersFromDb.Email = user.Email;
-        usersFromDb.UserName = user.UserName;
-        usersFromDb.Password = user.Password;
-        usersFromDb.Password = user.Password;
-        usersFromDb.Password = user.Password;
+        usersFromDb.Status = user.Status;
 
         await context.SaveChangesAsync();
         return Results.Ok(user);
     }
-    return Results.NotFound("TodoItem not found");
+    return Results.NotFound("User not found");
 });
-
 
 //Deleting Users
 app.MapDelete("/api/User/{id}", async (DataContext context, int id) =>
@@ -91,14 +92,10 @@ app.MapDelete("/api/User/{id}", async (DataContext context, int id) =>
     return Results.NotFound("User not found");
 });
 
-
-
 //PERMISSIONS
 app.MapGet("/api/Permissions", async (DataContext context) => await context.Permissions.ToListAsync());
 
 //userPermissions post  userid permissionid save
 //delete 
-
-
 
 app.Run();
