@@ -37,7 +37,7 @@ namespace MinimalAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Permissions");
+                    b.ToTable("Permissions", (string)null);
                 });
 
             modelBuilder.Entity("MinimalAPI.User", b =>
@@ -68,7 +68,7 @@ namespace MinimalAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("PermissionUser", b =>
