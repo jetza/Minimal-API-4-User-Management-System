@@ -47,7 +47,7 @@ app.MapGet("/", () => "User Management System minimal APIs");
 //USERS
 
 //Get all Users
-app.MapGet("/api/Users", async (DataContext context) => await context.Users.Take(10).ToListAsync());
+app.MapGet("/api/Users", async (DataContext context) => await context.Users.ToListAsync());
 
 //Get Users by id
 app.MapGet("/api/Users/{id}", async (DataContext context, int id) =>
@@ -83,7 +83,7 @@ app.MapPut("/api/Users/{id}", async (DataContext context, UserModel model, int i
         user.Status = model.Status;
 
         await context.SaveChangesAsync();
-        return Results.Ok(user);//
+        return Results.Ok(user);
     }
     return Results.NotFound("User not found");
 });
@@ -134,7 +134,7 @@ app.MapPut("/api/User/{id}/Permissions", async (DataContext context, Permissions
         }
         
         await context.SaveChangesAsync();
-        return Results.Ok();
+        return Results.Ok(user.Permissions.Select((o) => o.Id).ToList());
     }
     return Results.NotFound("Permission not found");
 });
